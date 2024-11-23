@@ -29,6 +29,8 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import android.text.Html;
+
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     SensorManager sensorManager;
@@ -101,11 +103,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(!shown_dialog) {
                 shown_dialog = true;
 
-                // หยุดการเล่นวิดีโอ
-                isPlayingVideo = false;
-                stickVideoView.pause();
-
-                //สร้างคู่หมายเลขและคำทำนาย
+                // สร้างคู่หมายเลขและคำทำนาย
                 Map<Integer, String> fortuneMap = new HashMap<>();
                 fortuneMap.put(1, "ดวงดีราบรื่น\n" +
                         "สิ่งที่หวังไว้จะสำเร็จลุล่วง ไม่ว่าจะเป็นเรื่องงานหรือความรัก สุขภาพแข็งแรง โชคลาภกำลังจะมา ให้ทำบุญเสริมดวงเพื่อรับสิ่งดี ๆ");
@@ -128,23 +126,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 fortuneMap.put(10, "ดวงต้องสร้างเอง\n" +
                         "ช่วงนี้อาจดูเหมือนไม่มีโชคมากนัก แต่ถ้าพยายามสุดความสามารถ จะมีคนช่วยเปิดทางให้สำเร็จ หมั่นทำความดีเพื่อสร้างพลังบวก");
 
-                //สุ่มหมายเลขเซียมซี
+                // สุ่มหมายเลขเซียมซี
                 int randomFortuneNumber = new Random().nextInt(fortuneMap.size()) + 1;
                 String fortune = fortuneMap.get(randomFortuneNumber);
+
+                // กำหนดข้อความโดยเน้นตัวหนาด้วย HTML
+                String dialogMessage = "<b>หมายเลขเซียมซี: </b>" + randomFortuneNumber + "<br><b>ผลการทำนาย: </b>" + fortune;
 
                 final AlertDialog.Builder viewDialog = new AlertDialog.Builder(this);
                 viewDialog.setIcon(android.R.drawable.btn_star_big_on);
                 viewDialog.setTitle("ผลการทำนาย");
-                viewDialog.setMessage("หมายเลขเซียมซี: " + randomFortuneNumber + "\nผลการทำนาย: " + fortune);
+                viewDialog.setMessage(Html.fromHtml(dialogMessage, Html.FROM_HTML_MODE_LEGACY));
                 viewDialog.setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 shown_dialog = false;
-
-                                // กลับมาเล่นวิดีโอต่อ
-                                isPlayingVideo = true;
-                                stickVideoView.start();
                             }
                         });
                 viewDialog.show();

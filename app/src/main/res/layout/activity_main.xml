@@ -8,7 +8,8 @@
     android:orientation="vertical"
     tools:context=".MainActivity"
     android:gravity="center"
-    android:baselineAligned="false" >
+    android:baselineAligned="false"
+    android:background="@color/white">
 
     <FrameLayout
         android:layout_width="match_parent"
