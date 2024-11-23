@@ -26,6 +26,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     SensorManager sensorManager;
     private static final int POLL_INTERVAL = 500;
@@ -79,10 +83,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if( (Math.abs(sensor_info.accX)>shake_threshold) || (Math.abs(sensor_info.accY)>shake_threshold) || (Math.abs(sensor_info.accZ)>shake_threshold) ) {
             if(!shown_dialog) {
                 shown_dialog = true;
+
+                //สร้างคู่หมายเลขและคำทำนาย
+                Map<Integer, String> fortuneMap = new HashMap<>();
+                fortuneMap.put(1, "ดวงดีราบรื่น\n" +
+                        "สิ่งที่หวังไว้จะสำเร็จลุล่วง ไม่ว่าจะเป็นเรื่องงานหรือความรัก สุขภาพแข็งแรง โชคลาภกำลังจะมา ให้ทำบุญเสริมดวงเพื่อรับสิ่งดี ๆ");
+                fortuneMap.put(2, "ช้าแต่มั่นคง\n" +
+                        "ผลของการกระทำในอดีตจะเริ่มส่งผล คุณอาจต้องอดทนกับอุปสรรคสักระยะ แต่ทุกอย่างจะดีขึ้นในอนาคต");
+                fortuneMap.put(3, "พบการเปลี่ยนแปลง\n" +
+                        "การงานหรือความรักอาจมีการเปลี่ยนแปลงที่ไม่คาดคิด แต่สุดท้ายจะนำไปสู่สิ่งที่ดีกว่า อย่ากลัวที่จะเริ่มต้นใหม่");
+                fortuneMap.put(4, "มีโชคลาภเล็กน้อย\n" +
+                        "สิ่งที่ตั้งใจไว้จะสำเร็จเพียงบางส่วน อย่าเพิ่งท้อแท้ ให้ตั้งใจทำต่อไป คนที่รักคุณจะช่วยสนับสนุน");
+                fortuneMap.put(5, "กลาง ๆ ไม่เด่นชัด\n" +
+                        "ดวงอยู่ในช่วงนิ่ง ต้องพึ่งพาความขยันและความอดทนเป็นหลัก หมั่นทำบุญและรักษาสุขภาพจะช่วยเสริมพลังดี");
+                fortuneMap.put(6, "เจอความท้าทาย\n" +
+                        "การงานมีคู่แข่ง ความรักอาจมีความไม่เข้าใจ แต่ถ้าตั้งใจและสื่อสารกันดี ทุกอย่างจะคลี่คลาย");
+                fortuneMap.put(7, "สุขภาพต้องระวัง\n" +
+                        "ระวังอาการเจ็บป่วยหรืออุบัติเหตุเล็ก ๆ น้อย ๆ การงานจะมีคนช่วยเหลือ แต่ต้องระมัดระวังเรื่องเอกสารหรือคำพูด");
+                fortuneMap.put(8, "ความรักสดใส\n" +
+                        "หากยังโสด มีโอกาสพบคนถูกใจเร็ว ๆ นี้ ถ้ามีคู่ ความรักจะราบรื่น การงานดีขึ้นหลังจากที่คุณพยายามมานาน");
+                fortuneMap.put(9, "สิ่งดีงามกำลังมา\n" +
+                        "ทุกอย่างเริ่มเข้าที่เข้าทาง โชคลาภกำลังปรากฏ อย่าลืมแบ่งปันความสุขให้ผู้อื่น ความรักและงานจะสมดุล");
+                fortuneMap.put(10, "ดวงต้องสร้างเอง\n" +
+                        "ช่วงนี้อาจดูเหมือนไม่มีโชคมากนัก แต่ถ้าพยายามสุดความสามารถ จะมีคนช่วยเปิดทางให้สำเร็จ หมั่นทำความดีเพื่อสร้างพลังบวก");
+
+                //สุ่มหมายเลขเซียมซี
+                int randomFortuneNumber = new Random().nextInt(fortuneMap.size()) + 1;
+                String fortune = fortuneMap.get(randomFortuneNumber);
+
                 final AlertDialog.Builder viewDialog = new AlertDialog.Builder(this);
                 viewDialog.setIcon(android.R.drawable.btn_star_big_on);
-                viewDialog.setTitle("ข้อความ");
-                viewDialog.setMessage("โทรศัพท์มีการเขย่า");
+                viewDialog.setTitle("ผลการทำนาย");
+                viewDialog.setMessage("หมายเลขเซียมซี: " + randomFortuneNumber + "\nผลการทำนาย: " + fortune);
                 viewDialog.setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
