@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     SensorInfo sensor_info = new SensorInfo();
     Boolean shown_dialog = false;
     private static final int shake_threshold = 15;
+    VideoView stickVideoView;
+    boolean isPlayingVideo = true;
 
     private final Runnable pollTask = new Runnable() {
         public void run() {
@@ -59,15 +61,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
 
         // กำหนด VideoView
-        VideoView stickVideoView = findViewById(R.id.stickView);
+        stickVideoView = findViewById(R.id.stickView);
         stickVideoView.setVideoURI(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.sticks));
         stickVideoView.setMediaController(new MediaController(this));
         stickVideoView.requestFocus();
+
+        // ตั้งให้ Video เล่นซ้ำแบบไม่รู้จบ
+        stickVideoView.setOnCompletionListener(mp -> {
+            if (isPlayingVideo) {
+                stickVideoView.start(); // เล่นใหม่
+            }
+        });
 
         // สั่งให้ Video เล่นอัตโนมัติ
         stickVideoView.start();
 
         sensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Sensors Info");
     }//end onCreate
 
     public void onAccuracyChanged(Sensor sensor, int accuracy){
@@ -75,14 +87,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }//end onAccuracyChanged
 
     public void onSensorChanged(SensorEvent event){
+        int type = event.sensor.getType();
 
+        if (type == Sensor.TYPE_ACCELEROMETER) {
+            sensor_info.accX=event.values[0];
+            sensor_info.accY=event.values[1];
+            sensor_info.accZ=event.values[2];
+        }
     }//end onSensorChanged
 
     public void showDialog() {
-
         if( (Math.abs(sensor_info.accX)>shake_threshold) || (Math.abs(sensor_info.accY)>shake_threshold) || (Math.abs(sensor_info.accZ)>shake_threshold) ) {
             if(!shown_dialog) {
                 shown_dialog = true;
+
+                // หยุดการเล่นวิดีโอ
+                isPlayingVideo = false;
+                stickVideoView.pause();
 
                 //สร้างคู่หมายเลขและคำทำนาย
                 Map<Integer, String> fortuneMap = new HashMap<>();
@@ -120,6 +141,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 shown_dialog = false;
+
+                                // กลับมาเล่นวิดีโอต่อ
+                                isPlayingVideo = true;
+                                stickVideoView.start();
                             }
                         });
                 viewDialog.show();
